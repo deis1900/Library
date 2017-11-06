@@ -3,7 +3,11 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.20.0/sqlite-jdbc-3.20.0.jar!/" />
     </CLASSES>
-    <JAVADOC />
-    <SOURCES />
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.20.0/sqlite-jdbc-3.20.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.20.0/sqlite-jdbc-3.20.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

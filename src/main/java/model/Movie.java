@@ -4,10 +4,12 @@ public class Movie {
 
     private int id;
     private String movieName;
+    private String year;
 
-    public Movie(int id, String movieName) {
+    public Movie(int id, String movieName, String year) {
         this.id = id;
         this.movieName = movieName;
+        this.year = year;
     }
 
     public int getId() {
@@ -26,11 +28,20 @@ public class Movie {
         this.movieName = movieName;
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
                 ", movieName='" + movieName + '\'' +
+                ", year='" + year + '\'' +
                 '}';
     }
 }

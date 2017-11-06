@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface DbManager {
 
-    void  add (String title, String date) throws SQLException;
+    void  add (String name, String date) throws SQLException;
 
-    void remove (String title) throws SQLException;
+    void remove (String name) throws SQLException;
 
-    void edit (String title) throws SQLException;
+    void edit (String name, String date) throws SQLException;
 
     List<Book> allBooks () throws SQLException;
 }
