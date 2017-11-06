@@ -78,6 +78,6 @@ public class Library {
             Scanner sc = new Scanner(System.in);
             System.out.println("\n To re-enter press 'Enter'");
             str = sc.nextLine();
-        } while (!str.equals("quite"));
+        } while (!str.equals("quit"));
     }
 }
