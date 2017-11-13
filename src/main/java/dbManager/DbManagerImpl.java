@@ -1,6 +1,9 @@
 package dbManager;
 
 import model.Book;
+import model.Game;
+import model.Movie;
+import model.Song;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,22 +14,22 @@ public class DbManagerImpl implements DbManager {
     private Connection connection = null;
     private Statement stmt = null;
 
-    private void open() {
+    private void open(String tableName) {
 
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection(CONNECTIONURL);
 
-            createBookTable();
+            createTable(tableName);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
 
         }
     }
 
-    private void createBookTable() throws SQLException {
-        stmt = connection.createStatement();
-        String sql = "CREATE TABLE IF NOT EXISTS BOOK" +
+    private void createTable(String tableName) throws SQLException {
+                stmt = connection.createStatement();
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " " +
                 "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 "TITLE  TEXT NOT NULL," +
                 "DATE   TEXT);";
@@ -34,11 +37,11 @@ public class DbManagerImpl implements DbManager {
         stmt.close();
     }
 
-    private Boolean checkRow(String title) {
+    private Boolean checkRow(String title, String tableName) {
 
         boolean b = true;
         try {
-            String sql = "SELECT * FROM BOOK;";
+            String sql = "SELECT * FROM " + tableName + ";";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 if (rs.getString("TITLE").equals(title)) {
@@ -67,14 +70,18 @@ public class DbManagerImpl implements DbManager {
         }
     }
 
-    public void add(String title, String date) throws SQLException {
-        open();
+    public void add(String title, String date, String tableName) throws SQLException {
+        open(tableName);
         stmt = connection.createStatement();
-        if (checkRow(title)) {
-            String sql = "INSERT INTO BOOK (TITLE, DATE) " +
+        if (checkRow(title, tableName)) {
+            String sql = "INSERT INTO " + tableName + " (TITLE, DATE) " +
                     " VALUES (' " + title + " ', ' " + date + " ');";
-            stmt.executeUpdate(sql);
-            System.out.println("book " + title + " added");
+            int rows = stmt.executeUpdate(sql);
+            if (rows == 1) {
+                System.out.println(tableName + " " + title + " added");
+            }else {
+                System.out.println(tableName + " row not added");
+            }
 
         } else {
             System.out.println("In the table there is such record");
@@ -84,14 +91,18 @@ public class DbManagerImpl implements DbManager {
 
     }
 
-    public void remove(String title) throws SQLException {
+    public void remove(String title, String tableName) throws SQLException {
 
-        open();
-        if (checkRow(title)) {
+        open(tableName);
+        if (checkRow(title, tableName)) {
             stmt = connection.createStatement();
-            String sql = "DELETE FROM BOOK WHERE TITLE = ' " + title + " ';";
-            stmt.executeUpdate(sql);
-            System.out.println("book " + title + " was removed.");
+            String sql = "DELETE FROM " + tableName + " WHERE TITLE = ' " + title + " ';";
+            int rows = stmt.executeUpdate(sql);
+            if (rows == 1) {
+                System.out.println(tableName + " " + title + " was removed.");
+            }else {
+                System.out.println(tableName + " row not removed");
+            }
         } else {
             System.out.println("There is no such record in the table");
         }
@@ -99,17 +110,20 @@ public class DbManagerImpl implements DbManager {
         close();
     }
 
-    public void edit(String title, String date) throws SQLException {
+    public void edit(String title, String date, String tableName) throws SQLException {
 
-        open();
+        open(tableName);
         stmt = connection.createStatement();
 
-        if (checkRow(title)) {
-            String sql = "UPDATE BOOK SET DATE = ' " + date + " '" +
+        if (checkRow(title, tableName)) {
+            String sql = "UPDATE " + tableName + " SET DATE = ' " + date + " '" +
                     "WHERE TITLE= ' " + title + " '; ";
-            stmt.executeUpdate(sql);
-
-            System.out.println("book " + title + " was edited.");
+            int rows = stmt.executeUpdate(sql);
+            if (rows ==1){
+                System.out.println(tableName + " " + title + " was edited.");
+            }else {
+                System.out.println(tableName +  " row not edited");
+            }
         } else {
             System.out.println("There is no such record in the table");
         }
@@ -118,12 +132,12 @@ public class DbManagerImpl implements DbManager {
     }
 
     public List<Book> allBooks() throws SQLException {
-
-        open();
+        String tableName = "BOOK";
+        open(tableName);
 
         stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT * FROM BOOK;");
-        List<Book> booksList = new ArrayList<Book>();
+        List<Book> booksList = new ArrayList<>();
 
         while (rs.next()) {
             Book b = new Book(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
@@ -132,5 +146,53 @@ public class DbManagerImpl implements DbManager {
 
         close();
         return booksList;
+    }
+    public List<Song> allSongs() throws SQLException {
+        String tableName = "song";
+        open(tableName);
+
+        stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM song;");
+        List<Song> songsList = new ArrayList<>();
+
+        while (rs.next()) {
+            Song b = new Song(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
+            songsList.add(b);
+        }
+
+        close();
+        return songsList;
+    }
+    public List<Movie> allMovies() throws SQLException {
+        String tableName = "movie";
+        open(tableName);
+
+        stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM movie;");
+        List<Movie> moviesList = new ArrayList<>();
+
+        while (rs.next()) {
+            Movie m = new Movie(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
+            moviesList.add(m);
+        }
+
+        close();
+        return moviesList;
+    }
+    public List<Game> allGames() throws SQLException {
+        String tableName = "game";
+        open(tableName);
+
+        stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM game;");
+        List<Game> gamesList = new ArrayList<>();
+
+        while (rs.next()) {
+            Game g = new Game(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
+            gamesList.add(g);
+        }
+
+        close();
+        return gamesList;
     }
 }
