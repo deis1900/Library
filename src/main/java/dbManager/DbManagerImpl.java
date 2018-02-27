@@ -1,9 +1,6 @@
 package dbManager;
 
-import model.Book;
-import model.Game;
-import model.Movie;
-import model.Song;
+import model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,21 +27,23 @@ public class DbManagerImpl implements DbManager {
     private void createTable(String tableName) throws SQLException {
                 stmt = connection.createStatement();
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " " +
-                "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                "TITLE  TEXT NOT NULL," +
-                "DATE   TEXT);";
+                "(Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                "Name TEXT NOT NULL," +
+                "Date TEXT, " +
+                "Author TEXT)";
         stmt.executeUpdate(sql);
         stmt.close();
     }
 
-    private Boolean checkRow(String title, String tableName) {
+    private Boolean checkRow(String name, String tableName) {
 
-        boolean b = true;
+        boolean b;
+        b = true;
         try {
             String sql = "SELECT * FROM " + tableName + ";";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                if (rs.getString("TITLE").equals(title)) {
+                if (rs.getString("Name")!= null && rs.getString("Name").equals(name)) {
                     b = false;
                 }
             }
@@ -52,8 +51,6 @@ public class DbManagerImpl implements DbManager {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-
         return b;
     }
 
@@ -70,15 +67,15 @@ public class DbManagerImpl implements DbManager {
         }
     }
 
-    public void add(String title, String date, String tableName) throws SQLException {
+    public void add(String name, String date, String author, String tableName) throws SQLException {
         open(tableName);
         stmt = connection.createStatement();
-        if (checkRow(title, tableName)) {
-            String sql = "INSERT INTO " + tableName + " (TITLE, DATE) " +
-                    " VALUES (' " + title + " ', ' " + date + " ');";
+        if (checkRow(name, tableName)) {
+            String sql = "INSERT INTO " + tableName + " (Name, Date, Author) " +
+                    " VALUES (' " + name + " ', ' " + date + " ', '" + author + "');";
             int rows = stmt.executeUpdate(sql);
             if (rows == 1) {
-                System.out.println(tableName + " " + title + " added");
+                System.out.println(tableName + " " + name + " added");
             }else {
                 System.out.println(tableName + " row not added");
             }
@@ -91,15 +88,15 @@ public class DbManagerImpl implements DbManager {
 
     }
 
-    public void remove(String title, String tableName) throws SQLException {
+    public void remove(String name, String tableName) throws SQLException {
 
         open(tableName);
-        if (checkRow(title, tableName)) {
+        if (checkRow(name, tableName)) {
             stmt = connection.createStatement();
-            String sql = "DELETE FROM " + tableName + " WHERE TITLE = ' " + title + " ';";
+            String sql = "DELETE FROM " + tableName + " WHERE Name = ' " + name + " ';";
             int rows = stmt.executeUpdate(sql);
             if (rows == 1) {
-                System.out.println(tableName + " " + title + " was removed.");
+                System.out.println(tableName + " " + name + " was removed.");
             }else {
                 System.out.println(tableName + " row not removed");
             }
@@ -110,89 +107,42 @@ public class DbManagerImpl implements DbManager {
         close();
     }
 
-    public void edit(String title, String date, String tableName) throws SQLException {
+    public void edit(String name, String date, String author, String tableName) throws SQLException {
 
         open(tableName);
         stmt = connection.createStatement();
 
-        if (checkRow(title, tableName)) {
-            String sql = "UPDATE " + tableName + " SET DATE = ' " + date + " '" +
-                    "WHERE TITLE= ' " + title + " '; ";
+        if (checkRow(name, tableName)) {
+            String sql = "UPDATE " + tableName + " SET Date = ' " + date + " '" +
+                    "WHERE Name= ' " + name + " '; ";
             int rows = stmt.executeUpdate(sql);
             if (rows ==1){
-                System.out.println(tableName + " " + title + " was edited.");
+                System.out.println(tableName + " " + name + " was edited.");
             }else {
                 System.out.println(tableName +  " row not edited");
             }
         } else {
-            System.out.println("There is no such record in the table");
+            System.out.println("Table have this record.");
         }
 
         close();
     }
 
-    public List<Book> allBooks() throws SQLException {
-        String tableName = "BOOK";
+    @Override
+    public List<Model> listAll(String tableName) throws SQLException {
         open(tableName);
 
         stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM BOOK;");
-        List<Book> booksList = new ArrayList<>();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + ";");
+        List<Model> models= new ArrayList<>();
 
         while (rs.next()) {
-            Book b = new Book(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
-            booksList.add(b);
+            Model model= new Model(rs.getLong("Id"), rs.getString("Name"), rs.getString("Date"),
+                    rs.getString("Author"));
+            models.add(model);
         }
 
         close();
-        return booksList;
-    }
-    public List<Song> allSongs() throws SQLException {
-        String tableName = "song";
-        open(tableName);
-
-        stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM song;");
-        List<Song> songsList = new ArrayList<>();
-
-        while (rs.next()) {
-            Song b = new Song(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
-            songsList.add(b);
-        }
-
-        close();
-        return songsList;
-    }
-    public List<Movie> allMovies() throws SQLException {
-        String tableName = "movie";
-        open(tableName);
-
-        stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM movie;");
-        List<Movie> moviesList = new ArrayList<>();
-
-        while (rs.next()) {
-            Movie m = new Movie(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
-            moviesList.add(m);
-        }
-
-        close();
-        return moviesList;
-    }
-    public List<Game> allGames() throws SQLException {
-        String tableName = "game";
-        open(tableName);
-
-        stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM game;");
-        List<Game> gamesList = new ArrayList<>();
-
-        while (rs.next()) {
-            Game g = new Game(rs.getInt("ID"), rs.getString("TITLE"), rs.getString("DATE"));
-            gamesList.add(g);
-        }
-
-        close();
-        return gamesList;
+        return models;
     }
 }

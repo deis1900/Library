@@ -1,9 +1,6 @@
 import dbManager.DbManager;
 import dbManager.DbManagerImpl;
-import model.Book;
-import model.Game;
-import model.Movie;
-import model.Song;
+import model.*;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -56,9 +53,10 @@ class MenuImpl {
         switch (words[1]) {
             case "add":
                 if (words.length > 2) {
-                    System.out.println("Enter year of publication to add:");
-                    String date = scanner.nextLine();
-                    dbManager.add(words[2], date, words[0]);
+                    System.out.println("Enter release_date. and author. to add:");
+                    String info = scanner.nextLine();
+                    String[] w = info.split(". ", 2);
+                    dbManager.add(words[2], w[0], w[1], words[0]);
                 } else {
                     System.out.println("You did not enter name. Repeat enter:");
 
@@ -66,9 +64,10 @@ class MenuImpl {
                 break;
             case "edit":
                 if (words.length > 2) {
-                    System.out.println("Enter year of publication to add:");
-                    String date = scanner.nextLine();
-                    dbManager.edit(words[2], date, words[0]);
+                    System.out.println("Enter release_date. and author. to add:");
+                    String info = scanner.nextLine();
+                    String[] w = info.split(".", 0);
+                    dbManager.edit(words[2], w[0], w[1], words[0]);
                 } else {
                     System.out.println("You did not enter name. Repeat enter:");
                 }
@@ -82,35 +81,43 @@ class MenuImpl {
 
                 }
                 break;
-            case "all":
+            case "list":
                 char[] tableChoice = words[0].toCharArray();
 
                 switch (tableChoice[0]) {
                     case 'b':
                         System.out.println("\n All Books:");
-                        List<Book> bookList = dbManager.allBooks();
-                        for (Book book : bookList) {
+                        List<Model> bookList = dbManager.listAll("Book");
+                        Book book;
+                        for (Model model : bookList) {
+                            book = new Book(model.getId(), model.getName(), model.getDate(), model.getAuthor());
                             System.out.println(book.toString());
                         }
                         break;
                     case 's':
                         System.out.println("\n All Songs:");
-                        List<Song> songList = dbManager.allSongs();
-                        for (Song song : songList) {
+                        List<Model> songList = dbManager.listAll("Song");
+                        Song song;
+                        for (Model model : songList) {
+                            song = new Song(model.getId(), model.getName(), model.getDate(), model.getAuthor());
                             System.out.println(song.toString());
                         }
                         break;
                     case 'm':
                         System.out.println("\n All Movies:");
-                        List<Movie> movieList = dbManager.allMovies();
-                        for (Movie movie : movieList) {
+                        List<Model> movieList = dbManager.listAll("Movie");
+                        Movie movie;
+                        for (Model model : movieList) {
+                            movie = new Movie(model.getId(), model.getName(), model.getDate(), model.getAuthor());
                             System.out.println(movie.toString());
                         }
                         break;
                     case 'g':
                         System.out.println("\n All Games:");
-                        List<Game> gameList = dbManager.allGames();
-                        for (Game game : gameList) {
+                        List<Model> gameList = dbManager.listAll("Game");
+                        Game game;
+                        for (Model model: gameList) {
+                            game = new Game(model.getId(), model.getName(), model.getDate(), model.getAuthor());
                             System.out.println(game.toString());
                         }
                         break;
@@ -125,26 +132,11 @@ class MenuImpl {
 
     private void help(){
         System.out.println("Please, make the correct enter:\n" +
-                " book" +
+                " section(for example BOOK)" +
                     "\n\tadd      ..title..\n" +
                     "\tremove   ..title..\n" +
                     "\tedit     ..title..\n" +
-                    "\tall books ..title..\n" +
-                " song" +
-                    "\n\tadd      ..title..\n" +
-                    "\tremove   ..title..\n" +
-                    "\tedit     ..title..\n" +
-                    "\tall songs ..title..\n" +
-                " movie" +
-                    "\n\tadd      ..title..\n" +
-                    "\tremove   ..title..\n" +
-                    "\tedit     ..title..\n" +
-                    "\tall movies ..title..\n" +
-                " game" +
-                    "\n\tadd      ..title..\n" +
-                    "\tremove   ..title..\n" +
-                    "\tedit     ..title..\n" +
-                    "\tall games ..title..\n" +
+                    "\tlist ..title..\n" +
                 " help\n" +
                 " quit");
     }

@@ -1,47 +1,17 @@
 package model;
 
-public class Movie {
-
-    private int id;
-    private String movieName;
-    private String year;
-
-    public Movie(int id, String movieName, String year) {
-        this.id = id;
-        this.movieName = movieName;
-        this.year = year;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getMovieName() {
-        return movieName;
-    }
-
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
+public class Movie extends Model{
+    public Movie(Long id, String name, String date, String author) {
+        super(id, name, date, author);
     }
 
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
-                ", movieName='" + movieName + '\'' +
-                ", year='" + year + '\'' +
+                ", title='" + name + '\'' +
+                ", release date='" + date + '\'' +
+                ", producer='" + author + '\'' +
                 '}';
     }
 }
