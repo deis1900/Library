@@ -1,4 +1,4 @@
-package model;
+package Input;
 
 public class Model {
 
@@ -6,6 +6,12 @@ public class Model {
     String name;
     String date;
     String author;
+
+    public Model(String name, String date, String author) {
+        this.name = name;
+        this.date = date;
+        this.author = author;
+    }
 
     public Model(Long id, String name, String date, String author) {
         this.id = id;
@@ -48,7 +54,7 @@ public class Model {
 
     @Override
     public String toString() {
-        return "Model{" +
+        return "Row{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", date='" + date + '\'' +

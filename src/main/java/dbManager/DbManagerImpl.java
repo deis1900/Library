@@ -1,6 +1,6 @@
 package dbManager;
 
-import model.*;
+import Input.Model;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,11 +25,11 @@ public class DbManagerImpl implements DbManager {
     }
 
     private void createTable(String tableName) throws SQLException {
-                stmt = connection.createStatement();
+        stmt = connection.createStatement();
         String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " " +
                 "(Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 "Name TEXT NOT NULL," +
-                "Date TEXT, " +
+                "Date_of_release TEXT, " +
                 "Author TEXT)";
         stmt.executeUpdate(sql);
         stmt.close();
@@ -43,7 +43,7 @@ public class DbManagerImpl implements DbManager {
             String sql = "SELECT * FROM " + tableName + ";";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                if (rs.getString("Name")!= null && rs.getString("Name").equals(name)) {
+                if (rs.getString("Name") != null && rs.getString("Name").equals(name)) {
                     b = false;
                 }
             }
@@ -67,16 +67,17 @@ public class DbManagerImpl implements DbManager {
         }
     }
 
-    public void add(String name, String date, String author, String tableName) throws SQLException {
+    @Override
+    public void add(Model model, String tableName) throws SQLException {
         open(tableName);
         stmt = connection.createStatement();
-        if (checkRow(name, tableName)) {
-            String sql = "INSERT INTO " + tableName + " (Name, Date, Author) " +
-                    " VALUES (' " + name + " ', ' " + date + " ', '" + author + "');";
+        if (checkRow(model.getName(), tableName)) {
+            String sql = "INSERT INTO " + tableName + " (Name, Author, Date_of_release) " +
+                    " VALUES (' " + model.getName() + " ', ' " + model.getAuthor() + " ', '" + model.getDate() + "');";
             int rows = stmt.executeUpdate(sql);
             if (rows == 1) {
-                System.out.println(tableName + " " + name + " added");
-            }else {
+                System.out.println(tableName + " " + model.getName() + " added");
+            } else {
                 System.out.println(tableName + " row not added");
             }
 
@@ -88,16 +89,18 @@ public class DbManagerImpl implements DbManager {
 
     }
 
-    public void remove(String name, String tableName) throws SQLException {
+    @Override
+    public void remove(Model model, String tableName) throws SQLException {
 
         open(tableName);
-        if (checkRow(name, tableName)) {
+        if (checkRow(model.getName(), tableName)) {
             stmt = connection.createStatement();
-            String sql = "DELETE FROM " + tableName + " WHERE Name = ' " + name + " ';";
+            String sql = "DELETE FROM " + tableName + " WHERE Name = ' " + model.getName() + " '" +
+                    " AND Date_of_release = '" + model.getDate() + "';";
             int rows = stmt.executeUpdate(sql);
             if (rows == 1) {
-                System.out.println(tableName + " " + name + " was removed.");
-            }else {
+                System.out.println(tableName + " " + model.getName() + " was removed.");
+            } else {
                 System.out.println(tableName + " row not removed");
             }
         } else {
@@ -107,19 +110,20 @@ public class DbManagerImpl implements DbManager {
         close();
     }
 
-    public void edit(String name, String date, String author, String tableName) throws SQLException {
+    @Override
+    public void edit(Model model, String tableName) throws SQLException {
 
         open(tableName);
         stmt = connection.createStatement();
 
-        if (checkRow(name, tableName)) {
-            String sql = "UPDATE " + tableName + " SET Date = ' " + date + " '" +
-                    "WHERE Name= ' " + name + " '; ";
+        if (checkRow(model.getName(), tableName)) {
+            String sql = "UPDATE " + tableName + " SET Date_of_release = ' " + model.getDate() + " '" +
+                    "WHERE Name= ' " + model.getName() + " '; ";
             int rows = stmt.executeUpdate(sql);
-            if (rows ==1){
-                System.out.println(tableName + " " + name + " was edited.");
-            }else {
-                System.out.println(tableName +  " row not edited");
+            if (rows == 1) {
+                System.out.println(tableName + " " + model.getName() + " was edited.");
+            } else {
+                System.out.println(tableName + " row not edited");
             }
         } else {
             System.out.println("Table have this record.");
@@ -134,10 +138,10 @@ public class DbManagerImpl implements DbManager {
 
         stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName + ";");
-        List<Model> models= new ArrayList<>();
+        List<Model> models = new ArrayList<>();
 
         while (rs.next()) {
-            Model model= new Model(rs.getLong("Id"), rs.getString("Name"), rs.getString("Date"),
+            Model model = new Model(rs.getLong("Id"), rs.getString("Name"), rs.getString("Date_of_release"),
                     rs.getString("Author"));
             models.add(model);
         }

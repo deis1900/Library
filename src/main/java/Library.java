@@ -4,10 +4,8 @@ import java.util.Scanner;
 public class Library {
     public static void main(String[] args) {
 
-        MenuImpl menu = new MenuImpl();
+        Menu menu = new Menu();
         String str;
-
-
 
         do {
             System.out.println("Enter:");
@@ -22,9 +20,10 @@ public class Library {
                 System.err.println(e.getClass().getName() + ": " + e.getMessage());
             }
 
-           Scanner sc = new Scanner(System.in);
-           System.out.println("\n To re-enter press 'Enter'");
-           str = sc.nextLine();
+            Scanner sc = new Scanner(System.in);
+            System.out.println("\n To re-enter press 'Enter'");
+            str = sc.nextLine();
         } while (!str.equals("exit"));
     }
 }
+
