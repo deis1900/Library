@@ -2,10 +2,10 @@ package Input;
 
 public class Model {
 
-    Long id;
-    String name;
-    String date;
-    String author;
+    private Long id;
+    private String name;
+    private String date;
+    private String author;
 
     public Model(String name, String date, String author) {
         this.name = name;

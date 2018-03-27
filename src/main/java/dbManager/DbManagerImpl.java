@@ -1,5 +1,6 @@
 package dbManager;
 
+import Input.Action;
 import Input.Model;
 
 import java.sql.*;
@@ -7,15 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbManagerImpl implements DbManager {
-    private static final String CONNECTIONURL = "jdbc:sqlite:MyLib.db";
+    private final String CONNECTION_URL;
+    private final String DRIVER_CLASS;
     private Connection connection = null;
     private Statement stmt = null;
 
-    private void open(String tableName) {
+    public DbManagerImpl(String CONNECTION_URL, String DRIVER_CLASS) {
+        this.CONNECTION_URL = CONNECTION_URL;
+        this.DRIVER_CLASS = DRIVER_CLASS;
+    }
 
+    private void open(String tableName) {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(CONNECTIONURL);
+            Class.forName(DRIVER_CLASS);
+            connection = DriverManager.getConnection(CONNECTION_URL);
 
             createTable(tableName);
         } catch (Exception e) {

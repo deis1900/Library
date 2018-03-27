@@ -2,25 +2,31 @@ package Input;
 
 public class Validator {
 
-    public Boolean verifyNameOfTable(String tableName) {
-        String unifiedValue = tableName.toUpperCase();
-        if(unifiedValue.equals("BOOK")
-                || unifiedValue.equals("SONG")
-                || unifiedValue.equals("MOVIE")
-                || unifiedValue.equals("GAME")){
-            return true;
-        } else if (unifiedValue.equals("QUIT")) {
-            System.exit(0);
-            return false;
-        }
-        else return false;
+//    Verify validity of incoming data
+
+    public Boolean checkForHelpCommand (String string) {
+        return string.toUpperCase().equals("HELP")
+                || string.equals("");
+    }
+    public Boolean checkForQuitCommand (String string) {
+        return string.toUpperCase().equals("QUIT")
+                || string.toUpperCase().equals("EXIT");
+    }
+    public Boolean validNameOfTable(String tableName) {
+        return tableName.equals("BOOK")
+                || tableName.equals("SONG")
+                || tableName.equals("MOVIE")
+                || tableName.equals("GAME");
+    }
+    public Boolean validCommand(String string) {
+        return string.equals("ADD")
+                || string.equals("REMOVE")
+                || string.equals("UPDATE")
+                || string.equals("LIST");
     }
 
-    public Boolean filterCommandList(String commandForAction) {
-        String unifiedValue = commandForAction.toUpperCase();
-        if(unifiedValue.equals("LIST")){
-            return false;
-        }
-        else return true;
+    public String validateInput(String string) {
+        return string.replaceAll("`", "''").replaceAll("'", "''");
     }
+
 }

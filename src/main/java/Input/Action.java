@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Action {
+    private static final String CONNECTION_URL = "jdbc:sqlite:MyLib.db";
+    private static final String DRIVER_CLASS = "org.sqlite.JDBC";
 
-    private DbManager dbManager = new DbManagerImpl();
+    private DbManager dbManager = new DbManagerImpl(CONNECTION_URL, DRIVER_CLASS);
 
     public void actionMake(String section, String action, Model model) throws SQLException {
 
@@ -29,7 +31,7 @@ public class Action {
         }
     }
 
-    public void actionMake(String section) throws SQLException {
+    public void showTable(String section) throws SQLException {
         List<Model> models = dbManager.listAll(section);
         for (Model model: models) {
             System.out.println(model.toString());
@@ -45,9 +47,5 @@ public class Action {
                 "\t -list\n" +
                 " help\n" +
                 " quit");
-    }
-
-    public void actionMake(String section, String name) {
-
     }
 }
